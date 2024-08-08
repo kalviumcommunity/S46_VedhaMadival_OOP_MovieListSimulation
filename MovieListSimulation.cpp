@@ -10,19 +10,22 @@ class Movie {
     int duration;
 
     public:
-    Movie(string name, string genre = " ", int duration=0)
-     : name(name), genre(genre), duration(duration) {}
+    Movie(string name, string genre = " ", int duration=0){
+        this->name = name;  
+        this->genre = genre;
+        this->duration=duration;
+    }
 
     string getName()const{
-        return name;
+        return this->name;
     }
 
     string getGenre()const{
-        return genre;
+        return this->genre;
     }
 
     int getDuration()const{
-        return duration;
+        return this->duration;
     }
 };
 
@@ -34,15 +37,20 @@ class User {
     vector<Movie> favorites;
 
     public:
-    User(string n) : name(n) {}
+    User(string name){
+        this->name = name;
+    }
 
-    void addToWatchList(const Movie& movie) {watchlist.push_back(movie);}
+    User& addToWatchList(const Movie& movie) {
+        this->watchlist.push_back(movie);
+        return *this;
+        }
 
     void addToWatched(const string& movieName){
-        for (auto i = watchlist.begin(); i!=watchlist.end(); ++i){
+        for (auto i = this->watchlist.begin(); i!=watchlist.end(); ++i){
             if(i->getName() == movieName) {
-                watched.push_back(*i);
-                watchlist.erase(i);
+                this->watched.push_back(*i);
+                this->watchlist.erase(i);
                 return;
             }
         }
@@ -59,14 +67,14 @@ class User {
         cout<<"--------------------"<<endl;
         cout<<"Movies in watchlist:" <<endl;
         cout<<"--------------------"<<endl;
-        listMovies(watchlist);
+        this->listMovies(this->watchlist);
     }
 
     void listWatched() const {        
         cout<<"--------------------"<<endl;
         cout<< "Movies in Watched:" <<endl;
         cout<<"--------------------"<<endl;
-        listMovies(watched);
+        this->listMovies(this->watched);
     }
 };
 
