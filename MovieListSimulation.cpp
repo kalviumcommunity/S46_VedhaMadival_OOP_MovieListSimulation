@@ -79,14 +79,17 @@ class User {
 };
 
 int main(){
-    Movie movie1("Inception");
-    Movie movie2("The Godfather", "Crime", 175);
-    Movie movie3("The Dark Knight", "Action", 152);
+    Movie movies[]= {
+    Movie("Inception"),
+    Movie("The Godfather", "Crime", 175),
+    Movie("The Dark Knight", "Action", 152)
+    };
 
     User user("Vedha");
 
-    user.addToWatchList(movie1);
-    user.addToWatchList(movie2);
+        for (const auto& movie : movies) {
+        user.addToWatchList(movie);
+    }
 
     user.listWatchList();
     user.addToWatched("Inception");
