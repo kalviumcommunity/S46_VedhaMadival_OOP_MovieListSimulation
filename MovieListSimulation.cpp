@@ -32,23 +32,36 @@ class Movie {
 class User {
     private:
     string name;
-    vector<Movie> watchlist;
-    vector<Movie> watched;
-    vector<Movie> favorites;
+    vector<Movie*> watchlist;
+    vector<Movie*> watched;
+    vector<Movie*> favorites;
 
     public:
     User(string name){
         this->name = name;
     }
 
-    User& addToWatchList(const Movie& movie) {
+    // Destructor : Automatically called when delete user is called and deletes the movies created.
+    ~User(){
+        for(Movie* movie:watchlist){
+            delete movie;
+        }
+        for(Movie* movie:watched){
+            delete movie;
+        }
+        for(Movie* movie:favorites){
+            delete movie;
+        }
+    }
+
+    User& addToWatchList(Movie* movie) {
         this->watchlist.push_back(movie);
         return *this;
         }
 
     void addToWatched(const string& movieName){
         for (auto i = this->watchlist.begin(); i!=watchlist.end(); ++i){
-            if(i->getName() == movieName) {
+            if((*i)->getName() == movieName) {
                 this->watched.push_back(*i);
                 this->watchlist.erase(i);
                 return;
@@ -57,9 +70,9 @@ class User {
         cout<<"Movie not found in watchlist."<<endl;
     }
 
-    void listMovies(const vector<Movie>& movies)const{
+    void listMovies(const vector<Movie*>& movies)const{
         for(const auto& movie : movies){
-            cout<< "Name:" << movie.getName() << ", Genre:"<< movie.getGenre()<< ", Duration:"<< movie.getDuration()<< "mins"<<endl;
+            cout<< "Name:" << movie->getName() << ", Genre:"<< movie->getGenre()<< ", Duration:"<< movie->getDuration()<< "mins"<<endl;
         }
     }
 
@@ -79,22 +92,24 @@ class User {
 };
 
 int main(){
-    Movie movies[]= {
-    Movie("Inception"),
-    Movie("The Godfather", "Crime", 175),
-    Movie("The Dark Knight", "Action", 152)
+    Movie* movies[]= {
+    new Movie("Inception"),
+    new Movie("The Godfather", "Crime", 175),
+    new Movie("The Dark Knight", "Action", 152)
     };
 
-    User user("Vedha");
+    User* user = new User("Vedha");
 
         for (const auto& movie : movies) {
-        user.addToWatchList(movie);
+        user->addToWatchList(movie);
     }
 
-    user.listWatchList();
-    user.addToWatched("Inception");
-    user.listWatched();
-    user.listWatchList();
+    user->listWatchList();
+    user->addToWatched("Inception");
+    user->listWatched();
+    user->listWatchList();
+
+    delete user;
 
     return 0;
 }
