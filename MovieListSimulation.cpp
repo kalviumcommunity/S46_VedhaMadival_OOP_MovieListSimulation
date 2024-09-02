@@ -8,12 +8,18 @@ class Movie {
     string name;
     string genre;
     int duration;
+    static int movieCount;
 
     public:
     Movie(string name, string genre = " ", int duration=0){
         this->name = name;  
         this->genre = genre;
         this->duration=duration;
+        ++movieCount; 
+    }
+
+    ~Movie(){
+        --movieCount;
     }
 
     string getName()const{
@@ -27,7 +33,13 @@ class Movie {
     int getDuration()const{
         return this->duration;
     }
+
+    static int getMovieCount(){
+        return movieCount;
+    }
 };
+
+int Movie::movieCount = 0;
 
 class User {
     private:
@@ -35,10 +47,12 @@ class User {
     vector<Movie*> watchlist;
     vector<Movie*> watched;
     vector<Movie*> favorites;
+    static int userCount;
 
     public:
     User(string name){
         this->name = name;
+        ++userCount;
     }
 
     // Destructor : Automatically called when delete user is called and deletes the movies created.
@@ -52,6 +66,7 @@ class User {
         for(Movie* movie:favorites){
             delete movie;
         }
+        --userCount;
     }
 
     User& addToWatchList(Movie* movie) {
@@ -89,7 +104,13 @@ class User {
         cout<<"--------------------"<<endl;
         this->listMovies(this->watched);
     }
+
+    static int getUserCount(){
+        return userCount;
+    }
 };
+
+int User::userCount = 0;
 
 int main(){
     Movie* movies[]= {
@@ -108,6 +129,10 @@ int main(){
     user->addToWatched("Inception");
     user->listWatched();
     user->listWatchList();
+    
+    cout<<"_______________________________________________________"<<endl;
+    cout<<"Total Number Of Movies:"<<Movie::getMovieCount()<<endl;
+    cout<<"Total Number Of Users:"<<User::getUserCount()<<endl;
 
     delete user;
 
