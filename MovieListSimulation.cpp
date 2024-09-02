@@ -34,6 +34,7 @@ class Movie {
         return this->duration;
     }
 
+    //Static Function
     static int getMovieCount(){
         return movieCount;
     }
@@ -105,6 +106,7 @@ class User {
         this->listMovies(this->watched);
     }
 
+    //static function
     static int getUserCount(){
         return userCount;
     }
@@ -129,7 +131,8 @@ int main(){
     user->addToWatched("Inception");
     user->listWatched();
     user->listWatchList();
-    
+
+    //Calling Static Functions
     cout<<"_______________________________________________________"<<endl;
     cout<<"Total Number Of Movies:"<<Movie::getMovieCount()<<endl;
     cout<<"Total Number Of Users:"<<User::getUserCount()<<endl;
