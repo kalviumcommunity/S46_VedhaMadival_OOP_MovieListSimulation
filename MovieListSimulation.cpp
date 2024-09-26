@@ -4,38 +4,54 @@
 using namespace std;
 
 class Movie {
-    private:
+private:
     string name;
     string genre;
     int duration;
     static int movieCount;
 
-    public:
-    Movie(string name, string genre = " ", int duration=0){
-        this->name = name;  
+public:
+    // Constructor
+    Movie(string name, string genre = " ", int duration = 0) {
+        this->name = name;
         this->genre = genre;
-        this->duration=duration;
-        ++movieCount; 
+        this->duration = duration;
+        ++movieCount;
     }
 
-    ~Movie(){
+    // Destructor
+    ~Movie() {
         --movieCount;
     }
 
-    string getName()const{
+    // Accessor (getter) methods
+    string getName() const {
         return this->name;
     }
 
-    string getGenre()const{
+    string getGenre() const {
         return this->genre;
     }
 
-    int getDuration()const{
+    int getDuration() const {
         return this->duration;
     }
 
-    //Static Function
-    static int getMovieCount(){
+    // Mutator (setter) methods
+    void setName(const string& name) {
+        this->name = name;
+    }
+
+    void setGenre(const string& genre) {
+        this->genre = genre;
+    }
+
+    void setDuration(int duration) {
+        this->duration = duration;
+    }
+
+    // Static Function
+    static int getMovieCount() {
         return movieCount;
     }
 };
@@ -43,87 +59,102 @@ class Movie {
 int Movie::movieCount = 0;
 
 class User {
-    private:
+private:
     string name;
     vector<Movie*> watchlist;
     vector<Movie*> watched;
     vector<Movie*> favorites;
     static int userCount;
 
-    public:
-    User(string name){
+public:
+    // Constructor
+    User(string name) {
         this->name = name;
         ++userCount;
     }
 
-    // Destructor : Automatically called when delete user is called and deletes the movies created.
-    ~User(){
-        for(Movie* movie:watchlist){
+    // Destructor
+    ~User() {
+        for (Movie* movie : watchlist) {
             delete movie;
         }
-        for(Movie* movie:watched){
+        for (Movie* movie : watched) {
             delete movie;
         }
-        for(Movie* movie:favorites){
+        for (Movie* movie : favorites) {
             delete movie;
         }
         --userCount;
     }
 
+    // Accessor (getter) methods
+    string getName() const {
+        return this->name;
+    }
+
+    vector<Movie*> getWatchList() const {
+        return this->watchlist;
+    }
+
+    // Mutator (setter) methods
+    void setName(const string& name) {
+        this->name = name;
+    }
+
     User& addToWatchList(Movie* movie) {
         this->watchlist.push_back(movie);
         return *this;
-        }
+    }
 
-    void addToWatched(const string& movieName){
-        for (auto i = this->watchlist.begin(); i!=watchlist.end(); ++i){
-            if((*i)->getName() == movieName) {
+    void addToWatched(const string& movieName) {
+        for (auto i = this->watchlist.begin(); i != watchlist.end(); ++i) {
+            if ((*i)->getName() == movieName) {
                 this->watched.push_back(*i);
                 this->watchlist.erase(i);
                 return;
             }
         }
-        cout<<"Movie not found in watchlist."<<endl;
+        cout << "Movie not found in watchlist." << endl;
     }
 
-    void listMovies(const vector<Movie*>& movies)const{
-        for(const auto& movie : movies){
-            cout<< "Name:" << movie->getName() << ", Genre:"<< movie->getGenre()<< ", Duration:"<< movie->getDuration()<< "mins"<<endl;
+    void listMovies(const vector<Movie*>& movies) const {
+        for (const auto& movie : movies) {
+            cout << "Name: " << movie->getName() << ", Genre: " << movie->getGenre() << ", Duration: " << movie->getDuration() << " mins" << endl;
         }
     }
 
     void listWatchList() const {
-        cout<<"--------------------"<<endl;
-        cout<<"Movies in watchlist:" <<endl;
-        cout<<"--------------------"<<endl;
+        cout << "--------------------" << endl;
+        cout << "Movies in watchlist:" << endl;
+        cout << "--------------------" << endl;
         this->listMovies(this->watchlist);
     }
 
-    void listWatched() const {        
-        cout<<"--------------------"<<endl;
-        cout<< "Movies in Watched:" <<endl;
-        cout<<"--------------------"<<endl;
+    void listWatched() const {
+        cout << "--------------------" << endl;
+        cout << "Movies in Watched:" << endl;
+        cout << "--------------------" << endl;
         this->listMovies(this->watched);
     }
 
-    //static function
-    static int getUserCount(){
+    // Static Function
+    static int getUserCount() {
         return userCount;
     }
 };
 
 int User::userCount = 0;
 
-int main(){
-    Movie* movies[]= {
-    new Movie("Inception"),
-    new Movie("The Godfather", "Crime", 175),
-    new Movie("The Dark Knight", "Action", 152)
+int main() {
+    Movie* movies[] = {
+        new Movie("Inception"),
+        new Movie("The Godfather", "Crime", 175),
+        new Movie("The Dark Knight", "Action", 152)
     };
 
     User* user = new User("Vedha");
 
-        for (const auto& movie : movies) {
+    for (const auto& movie : movies) {
         user->addToWatchList(movie);
     }
 
@@ -132,12 +163,13 @@ int main(){
     user->listWatched();
     user->listWatchList();
 
-    //Calling Static Functions
-    cout<<"_______________________________________________________"<<endl;
-    cout<<"Total Number Of Movies:"<<Movie::getMovieCount()<<endl;
-    cout<<"Total Number Of Users:"<<User::getUserCount()<<endl;
+    // Calling Static Functions
+    cout << "_______________________________________________________" << endl;
+    cout << "Total Number Of Movies: " << Movie::getMovieCount() << endl;
+    cout << "Total Number Of Users: " << User::getUserCount() << endl;
 
-    delete user;
+    delete user; // This deletes the user and also deletes all movies in their lists
+
 
     return 0;
 }
