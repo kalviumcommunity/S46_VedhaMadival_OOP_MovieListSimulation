@@ -11,17 +11,27 @@ private:
     static int movieCount;
 
 public:
-    // Constructor
+    // Default Constructor
+    Movie() {
+        name = "Unknown";
+        genre = "Unknown";
+        duration = 0;
+        cout << "Default Constructor called: " << name << " created." << endl;
+    }
+
+    // Parametrized Constructor
     Movie(string name, string genre = " ", int duration = 0) {
         this->name = name;
         this->genre = genre;
         this->duration = duration;
         ++movieCount;
+        cout << "Parametrized Constructor called: " << name << " created." << endl;
     }
 
     // Destructor
     ~Movie() {
         --movieCount;
+        cout << "Destructor called: " << name << " destroyed." << endl;
     }
 
     // Accessor (getter) methods
@@ -71,6 +81,7 @@ public:
     User(string name) {
         this->name = name;
         ++userCount;
+        cout << "User Constructor called: " << name << " created." << endl;
     }
 
     // Destructor
@@ -85,6 +96,7 @@ public:
             delete movie;
         }
         --userCount;
+        cout << "User Destructor called: " << name << " destroyed." << endl;
     }
 
     // Accessor (getter) methods
@@ -145,31 +157,44 @@ public:
 
 int User::userCount = 0;
 
+
 int main() {
+    //with default constructor
+    Movie* defaultMovie = new Movie(); 
+
+    //with parameterized constructor
     Movie* movies[] = {
-        new Movie("Inception"),
+        new Movie("Inception", "Sci-Fi", 148),
         new Movie("The Godfather", "Crime", 175),
         new Movie("The Dark Knight", "Action", 152)
     };
 
-    User* user = new User("Vedha");
+
+    User* user1 = new User("Vedha");
+    User* user2 = new User("Alex");
 
     for (const auto& movie : movies) {
-        user->addToWatchList(movie);
+        user1->addToWatchList(movie);
     }
 
-    user->listWatchList();
-    user->addToWatched("Inception");
-    user->listWatched();
-    user->listWatchList();
+    user1->listWatchList();
+
+
+    user1->addToWatched("Inception");
+    user1->listWatched();
+
+    user2->addToWatchList(new Movie("The Dark Knight", "Action", 152));
+    user2->listWatchList();
 
     // Calling Static Functions
     cout << "_______________________________________________________" << endl;
     cout << "Total Number Of Movies: " << Movie::getMovieCount() << endl;
     cout << "Total Number Of Users: " << User::getUserCount() << endl;
 
-    delete user; // This deletes the user and also deletes all movies in their lists
-
+    delete defaultMovie;
+    delete user1; 
+    delete user2; 
 
     return 0;
 }
+
