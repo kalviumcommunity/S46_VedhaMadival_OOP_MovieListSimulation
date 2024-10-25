@@ -16,16 +16,16 @@ public:
         name = "Unknown";
         genre = "Unknown";
         duration = 0;
-        cout << "---Default Constructor called: " << name << " created.---" << endl;
+        // cout << "---Default Constructor called: " << name << " created.---" << endl;
     }
 
-    // Parametrized Constructor
+    // Parameterized Constructor
     Movie(string name, string genre = "Unknown", int duration = 0) {
         this->name = name;
         this->genre = genre;
         this->duration = duration;
         ++movieCount;
-        cout << "---Parametrized Constructor called: " << name << " created.---" << endl;
+        // cout << "---Parametrized Constructor called: " << name << " created.---" << endl;
     }
 
     // Destructor
@@ -51,6 +51,24 @@ public:
     static int getMovieCount() {
         return movieCount;
     }
+
+    //Display Function
+    void display() const {
+        cout << "Movie Name: " << getName()
+        <<" , Genre: " <<getGenre()
+        <<" , Duration: "<<getDuration()<<endl;
+    }
+
+    //Overloaded display Function
+    void display(const string& format){
+        if(format == "short"){
+            cout << getName() << "("<<getGenre() <<")"<<endl;
+            }
+        else{
+            display();
+        }
+    }
+
 };
 
 int Movie::movieCount = 0;
@@ -85,7 +103,7 @@ public:
     User(string name) {
         this->name = name;
         ++userCount;
-        cout << "User Constructor called: " << name << " created." << endl;
+        // cout << "User Constructor called: " << name << " created." << endl;
     }
 
     // Destructor
@@ -98,7 +116,7 @@ public:
             delete movie; // Deleting watched movies
         }
         --userCount;
-        cout << "User Destructor called: " << name << " destroyed." << endl;
+        // cout << "User Destructor called: " << name << " destroyed." << endl;
     }
 
     // Accessor (getter) methods
@@ -177,23 +195,27 @@ int main() {
     Movie* movie1 = new Movie("Inception", "Sci-Fi", 148);
     Movie* movie2 = new Movie("The Godfather", "Crime", 175);
 
-    cout << "--- Demonstrating RomComMovie ---" << endl;
+    // cout << "--- Demonstrating RomComMovie ---" << endl;
     RomComMovie* romCom = new RomComMovie("Crazy Rich Asians", 121);
     romCom->display();
 
-    cout << "--- Creating Users ---" << endl;
+    cout << "--- Using Function Overloading ---" << endl;
+    movie1->display("short");
+    movie2->display();
+
+    // cout << "--- Creating Users ---" << endl;
     AdminUser* admin = new AdminUser("Vedha");
     RegularUser* user1 = new RegularUser("Alex");
 
-    cout << "--- Regular User Activities ---" << endl;
+    // cout << "--- Regular User Activities ---" << endl;
     user1->addToWatchList(movie1);
     user1->addToWatchList(movie2);
     user1->listWatchList();
 
-    cout << "--- Admin User Activities ---" << endl;
+    // cout << "--- Admin User Activities ---" << endl;
     admin->manageUsers();
 
-    cout << "--- Watching a Movie ---" << endl;
+    // cout << "--- Watching a Movie ---" << endl;
     user1->addToWatched("Inception");
     user1->listWatched();
 
