@@ -16,22 +16,22 @@ public:
         name = "Unknown";
         genre = "Unknown";
         duration = 0;
-        cout << "Default Constructor called: " << name << " created." << endl;
+        cout << "---Default Constructor called: " << name << " created.---" << endl;
     }
 
     // Parametrized Constructor
-    Movie(string name, string genre = " ", int duration = 0) {
+    Movie(string name, string genre = "Unknown", int duration = 0) {
         this->name = name;
         this->genre = genre;
         this->duration = duration;
         ++movieCount;
-        cout << "Parametrized Constructor called: " << name << " created." << endl;
+        cout << "---Parametrized Constructor called: " << name << " created.---" << endl;
     }
 
     // Destructor
     ~Movie() {
         --movieCount;
-        cout << "Destructor called: " << name << " destroyed." << endl;
+        cout << "---Destructor called: " << name << " destroyed.---" << endl;
     }
 
     // Accessor (getter) methods
@@ -47,19 +47,6 @@ public:
         return this->duration;
     }
 
-    // Mutator (setter) methods
-    void setName(const string& name) {
-        this->name = name;
-    }
-
-    void setGenre(const string& genre) {
-        this->genre = genre;
-    }
-
-    void setDuration(int duration) {
-        this->duration = duration;
-    }
-
     // Static Function
     static int getMovieCount() {
         return movieCount;
@@ -68,12 +55,29 @@ public:
 
 int Movie::movieCount = 0;
 
+// Single Inheritance
+class RomComMovie : public Movie {
+private:
+    bool feelGood;
+
+public:
+    RomComMovie(string name, int duration, bool feelGood = true)
+        : Movie(name, "Romantic Comedy", duration), feelGood(feelGood) {}
+
+    bool getFeelGood() const { return feelGood; }
+
+    void display() const {
+        cout << "RomCom Movie - Name: " << getName()
+             << ", Duration: " << getDuration()
+             << " mins, Feel Good: " << (feelGood ? "Yes" : "No") << endl;
+    }
+};
+
 class User {
 private:
     string name;
     vector<Movie*> watchlist;
     vector<Movie*> watched;
-    vector<Movie*> favorites;
     static int userCount;
 
 public:
@@ -86,14 +90,12 @@ public:
 
     // Destructor
     ~User() {
-        for (Movie* movie : watchlist) {
-            delete movie;
+        // Clean up movies in the watchlist and watched lists
+        for (auto movie : watchlist) {
+            delete movie; // Deleting movies in the watchlist
         }
-        for (Movie* movie : watched) {
-            delete movie;
-        }
-        for (Movie* movie : favorites) {
-            delete movie;
+        for (auto movie : watched) {
+            delete movie; // Deleting watched movies
         }
         --userCount;
         cout << "User Destructor called: " << name << " destroyed." << endl;
@@ -102,10 +104,6 @@ public:
     // Accessor (getter) methods
     string getName() const {
         return this->name;
-    }
-
-    vector<Movie*> getWatchList() const {
-        return this->watchlist;
     }
 
     // Mutator (setter) methods
@@ -157,44 +155,51 @@ public:
 
 int User::userCount = 0;
 
+class AdminUser : public User {
+public:
+    AdminUser(string name) : User(name) {}
+
+    void manageUsers() const {
+        cout << "Admin " << getName() << " is managing users." << endl;
+    }
+};
+
+class RegularUser : public User {
+public:
+    RegularUser(string name) : User(name) {}
+
+    void giveFeedback() const {
+        cout << "Regular user " << getName() << " is giving feedback." << endl;
+    }
+};
 
 int main() {
-    //with default constructor
-    Movie* defaultMovie = new Movie(); 
+    Movie* movie1 = new Movie("Inception", "Sci-Fi", 148);
+    Movie* movie2 = new Movie("The Godfather", "Crime", 175);
 
-    //with parameterized constructor
-    Movie* movies[] = {
-        new Movie("Inception", "Sci-Fi", 148),
-        new Movie("The Godfather", "Crime", 175),
-        new Movie("The Dark Knight", "Action", 152)
-    };
+    cout << "--- Demonstrating RomComMovie ---" << endl;
+    RomComMovie* romCom = new RomComMovie("Crazy Rich Asians", 121);
+    romCom->display();
 
+    cout << "--- Creating Users ---" << endl;
+    AdminUser* admin = new AdminUser("Vedha");
+    RegularUser* user1 = new RegularUser("Alex");
 
-    User* user1 = new User("Vedha");
-    User* user2 = new User("Alex");
-
-    for (const auto& movie : movies) {
-        user1->addToWatchList(movie);
-    }
-
+    cout << "--- Regular User Activities ---" << endl;
+    user1->addToWatchList(movie1);
+    user1->addToWatchList(movie2);
     user1->listWatchList();
 
+    cout << "--- Admin User Activities ---" << endl;
+    admin->manageUsers();
 
+    cout << "--- Watching a Movie ---" << endl;
     user1->addToWatched("Inception");
     user1->listWatched();
 
-    user2->addToWatchList(new Movie("The Dark Knight", "Action", 152));
-    user2->listWatchList();
-
-    // Calling Static Functions
-    cout << "_______________________________________________________" << endl;
-    cout << "Total Number Of Movies: " << Movie::getMovieCount() << endl;
-    cout << "Total Number Of Users: " << User::getUserCount() << endl;
-
-    delete defaultMovie;
     delete user1; 
-    delete user2; 
+    delete admin; 
+    delete romCom; 
 
     return 0;
 }
-
