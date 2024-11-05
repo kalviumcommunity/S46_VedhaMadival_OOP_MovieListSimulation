@@ -4,13 +4,14 @@
 using namespace std;
 
 class Movie {
-private:
+    //Abstract Class
+    private:
     string name;
     string genre;
     int duration;
     static int movieCount;
-
-public:
+    
+    public:
     // Default Constructor
     Movie() {
         name = "Unknown";
@@ -53,22 +54,25 @@ public:
     }
 
     //Display Function
-    void display() const {
-        cout << "Movie Name: " << getName()
-        <<" , Genre: " <<getGenre()
-        <<" , Duration: "<<getDuration()<<endl;
-    }
+    // void display() const {
+    //     cout << "Movie Name: " << getName()
+    //     <<" , Genre: " <<getGenre()
+    //     <<" , Duration: "<<getDuration()<<endl;
+    // }
 
     //Overloaded display Function
-    void display(const string& format){
-        if(format == "short"){
-            cout << getName() << "("<<getGenre() <<")"<<endl;
-            }
-        else{
-            display();
-        }
-    }
+    // void display(const string& format){
+    //     if(format == "short"){
+    //         cout << getName() << "("<<getGenre() <<")"<<endl;
+    //         }
+    //     else{
+    //         display();
+    //     }
+    // }
 
+    // Pure Virtual Function
+    virtual void display() const = 0;
+    
 };
 
 int Movie::movieCount = 0;
@@ -84,12 +88,35 @@ public:
 
     bool getFeelGood() const { return feelGood; }
 
-    void display() const {
-        cout << "RomCom Movie - Name: " << getName()
+    void display() const override{
+        cout << " RomCom Movie - Name: " << getName()
              << ", Duration: " << getDuration()
              << " mins, Feel Good: " << (feelGood ? "Yes" : "No") << endl;
     }
 };
+
+class CrimeThrillerMovie : public Movie {
+    public:
+    CrimeThrillerMovie(string name, int duration) 
+    : Movie (name , "Crime" , duration) {}
+
+    void display() const override{
+        cout<< " CrimeThriller Movie - Name: " << getName()
+        << ", Duration: "<<getDuration()<<" mins "<<endl;
+    }
+};
+
+class SciFiMovie : public Movie {
+    public:
+    SciFiMovie(string name, int duration) 
+    : Movie (name , "Sci-Fi" , duration) {}
+
+    void display() const override{
+        cout<< " SciFi Movie - Name: " << getName()
+        << ", Duration: "<<getDuration()<<" mins "<<endl;
+    }
+};
+
 
 class User {
 private:
@@ -108,12 +135,11 @@ public:
 
     // Destructor
     ~User() {
-        // Clean up movies in the watchlist and watched lists
         for (auto movie : watchlist) {
-            delete movie; // Deleting movies in the watchlist
+            delete movie;
         }
         for (auto movie : watched) {
-            delete movie; // Deleting watched movies
+            delete movie;
         }
         --userCount;
         // cout << "User Destructor called: " << name << " destroyed." << endl;
@@ -192,16 +218,14 @@ public:
 };
 
 int main() {
-    Movie* movie1 = new Movie("Inception", "Sci-Fi", 148);
-    Movie* movie2 = new Movie("The Godfather", "Crime", 175);
+    Movie* movie1 = new SciFiMovie("Inception", 148);
+    Movie* movie2 = new CrimeThrillerMovie("The Godfather", 175);
 
     // cout << "--- Demonstrating RomComMovie ---" << endl;
     RomComMovie* romCom = new RomComMovie("Crazy Rich Asians", 121);
     romCom->display();
-
-    cout << "--- Using Function Overloading ---" << endl;
-    movie1->display("short");
     movie2->display();
+    movie1->display();
 
     // cout << "--- Creating Users ---" << endl;
     AdminUser* admin = new AdminUser("Vedha");
@@ -218,6 +242,7 @@ int main() {
     // cout << "--- Watching a Movie ---" << endl;
     user1->addToWatched("Inception");
     user1->listWatched();
+    user1->listWatchList();
 
     delete user1; 
     delete admin; 
