@@ -3,250 +3,163 @@
 #include <string>
 using namespace std;
 
+//Manages Movie Only
 class Movie {
-    //Abstract Class
-    private:
+private:
     string name;
     string genre;
     int duration;
     static int movieCount;
-    
-    public:
-    // Default Constructor
-    Movie() {
-        name = "Unknown";
-        genre = "Unknown";
-        duration = 0;
-        // cout << "---Default Constructor called: " << name << " created.---" << endl;
-    }
 
-    // Parameterized Constructor
+public:
     Movie(string name, string genre = "Unknown", int duration = 0) {
         this->name = name;
         this->genre = genre;
         this->duration = duration;
         ++movieCount;
-        // cout << "---Parametrized Constructor called: " << name << " created.---" << endl;
     }
 
-    // Destructor
     ~Movie() {
         --movieCount;
-        cout << "---Destructor called: " << name << " destroyed.---" << endl;
     }
 
-    // Accessor (getter) methods
     string getName() const {
-        return this->name;
-    }
-
+         return this->name; 
+         }
     string getGenre() const {
-        return this->genre;
-    }
-
+         return this->genre; 
+         }
     int getDuration() const {
-        return this->duration;
-    }
+         return this->duration; 
+         }
 
-    // Static Function
     static int getMovieCount() {
-        return movieCount;
-    }
-
-    //Display Function
-    // void display() const {
-    //     cout << "Movie Name: " << getName()
-    //     <<" , Genre: " <<getGenre()
-    //     <<" , Duration: "<<getDuration()<<endl;
-    // }
-
-    //Overloaded display Function
-    // void display(const string& format){
-    //     if(format == "short"){
-    //         cout << getName() << "("<<getGenre() <<")"<<endl;
-    //         }
-    //     else{
-    //         display();
-    //     }
-    // }
-
-    // Pure Virtual Function
-    virtual void display() const = 0;
-    
+         return movieCount; 
+         }
 };
 
 int Movie::movieCount = 0;
 
-// Single Inheritance
-class RomComMovie : public Movie {
-private:
-    bool feelGood;
 
+//Displaying the Movie
+class MovieDisplay {
 public:
-    RomComMovie(string name, int duration, bool feelGood = true)
-        : Movie(name, "Romantic Comedy", duration), feelGood(feelGood) {}
-
-    bool getFeelGood() const { return feelGood; }
-
-    void display() const override{
-        cout << " RomCom Movie - Name: " << getName()
-             << ", Duration: " << getDuration()
-             << " mins, Feel Good: " << (feelGood ? "Yes" : "No") << endl;
+    static void displayShort(const Movie& movie) {
+        cout << movie.getName() << " (" << movie.getGenre() << ")" << endl;
     }
-};
 
-class CrimeThrillerMovie : public Movie {
-    public:
-    CrimeThrillerMovie(string name, int duration) 
-    : Movie (name , "Crime" , duration) {}
-
-    void display() const override{
-        cout<< " CrimeThriller Movie - Name: " << getName()
-        << ", Duration: "<<getDuration()<<" mins "<<endl;
-    }
-};
-
-class SciFiMovie : public Movie {
-    public:
-    SciFiMovie(string name, int duration) 
-    : Movie (name , "Sci-Fi" , duration) {}
-
-    void display() const override{
-        cout<< " SciFi Movie - Name: " << getName()
-        << ", Duration: "<<getDuration()<<" mins "<<endl;
+    static void displayDetailed(const Movie& movie) {
+        cout << "Name: " << movie.getName()
+             << ", Genre: " << movie.getGenre()
+             << ", Duration: " << movie.getDuration() << " mins" << endl;
     }
 };
 
 
+//Manages the watchlist and watchedlist
 class User {
 private:
     string name;
     vector<Movie*> watchlist;
     vector<Movie*> watched;
-    static int userCount;
 
 public:
-    // Constructor
-    User(string name) {
-        this->name = name;
-        ++userCount;
-        // cout << "User Constructor called: " << name << " created." << endl;
-    }
+    User(string name) : name(name) {}
 
-    // Destructor
-    ~User() {
-        for (auto movie : watchlist) {
-            delete movie;
-        }
-        for (auto movie : watched) {
-            delete movie;
-        }
-        --userCount;
-        // cout << "User Destructor called: " << name << " destroyed." << endl;
-    }
-
-    // Accessor (getter) methods
     string getName() const {
-        return this->name;
-    }
+         return this->name; 
+         }
 
-    // Mutator (setter) methods
-    void setName(const string& name) {
-        this->name = name;
-    }
+    void addToWatchlist(Movie* movie) {
+         this->watchlist.push_back(movie); 
+         }
 
-    User& addToWatchList(Movie* movie) {
-        this->watchlist.push_back(movie);
-        return *this;
-    }
-
-    void addToWatched(const string& movieName) {
-        for (auto i = this->watchlist.begin(); i != watchlist.end(); ++i) {
-            if ((*i)->getName() == movieName) {
-                this->watched.push_back(*i);
-                this->watchlist.erase(i);
+    void moveToWatched(const string& movieName) {
+        for (auto it = watchlist.begin(); it != watchlist.end(); ++it) {
+            if ((*it)->getName() == movieName) {
+                this->watched.push_back(*it);
+                watchlist.erase(it);
                 return;
             }
         }
         cout << "Movie not found in watchlist." << endl;
     }
 
-    void listMovies(const vector<Movie*>& movies) const {
-        for (const auto& movie : movies) {
-            cout << "Name: " << movie->getName() << ", Genre: " << movie->getGenre() << ", Duration: " << movie->getDuration() << " mins" << endl;
+    void listWatchlist() const {
+        cout << "--- Watchlist ---" << endl;
+        for (const auto& movie : watchlist) {
+            MovieDisplay::displayShort(*movie);
         }
     }
 
-    void listWatchList() const {
-        cout << "--------------------" << endl;
-        cout << "Movies in watchlist:" << endl;
-        cout << "--------------------" << endl;
-        this->listMovies(this->watchlist);
-    }
-
     void listWatched() const {
-        cout << "--------------------" << endl;
-        cout << "Movies in Watched:" << endl;
-        cout << "--------------------" << endl;
-        this->listMovies(this->watched);
-    }
-
-    // Static Function
-    static int getUserCount() {
-        return userCount;
+        cout << "--- Watched Movies ---" << endl;
+        for (const auto& movie : watched) {
+            MovieDisplay::displayShort(*movie);
+        }
     }
 };
 
-int User::userCount = 0;
 
+//Adds functionality for the admin user
 class AdminUser : public User {
 public:
     AdminUser(string name) : User(name) {}
 
-    void manageUsers() const {
-        cout << "Admin " << getName() << " is managing users." << endl;
+    void manageMovies() {
+        cout << "Admin " << getName() << " is managing movies in the system." << endl;
     }
 };
 
-class RegularUser : public User {
-public:
-    RegularUser(string name) : User(name) {}
 
-    void giveFeedback() const {
-        cout << "Regular user " << getName() << " is giving feedback." << endl;
+//Manages adding and listing all movies
+class MovieManager {
+private:
+    vector<Movie*> allMovies;
+
+public:
+    void addMovie(Movie* movie) {
+        allMovies.push_back(movie);
+    }
+
+    void listAllMovies() const {
+        cout << "--- All Movies ---" << endl;
+        for (const auto& movie : allMovies) {
+            MovieDisplay::displayDetailed(*movie);
+        }
+    }
+
+    ~MovieManager() {
+        for (auto movie : allMovies) {
+            delete movie;
+        }
     }
 };
 
 int main() {
-    Movie* movie1 = new SciFiMovie("Inception", 148);
-    Movie* movie2 = new CrimeThrillerMovie("The Godfather", 175);
+    MovieManager movieManager;
 
-    // cout << "--- Demonstrating RomComMovie ---" << endl;
-    RomComMovie* romCom = new RomComMovie("Crazy Rich Asians", 121);
-    romCom->display();
-    movie2->display();
-    movie1->display();
+    Movie* inception = new Movie("Inception", "Sci-Fi", 148);
+    Movie* godfather = new Movie("The Godfather", "Crime", 175);
+    Movie* loveActually = new Movie("Love Actually", "Romantic Comedy", 135);
 
-    // cout << "--- Creating Users ---" << endl;
-    AdminUser* admin = new AdminUser("Vedha");
-    RegularUser* user1 = new RegularUser("Alex");
+    movieManager.addMovie(inception);
+    movieManager.addMovie(godfather);
+    movieManager.addMovie(loveActually);
 
-    // cout << "--- Regular User Activities ---" << endl;
-    user1->addToWatchList(movie1);
-    user1->addToWatchList(movie2);
-    user1->listWatchList();
+    AdminUser admin("Vedha");
+    User regularUser("Alex");
 
-    // cout << "--- Admin User Activities ---" << endl;
-    admin->manageUsers();
+    admin.manageMovies();
+    movieManager.listAllMovies();
 
-    // cout << "--- Watching a Movie ---" << endl;
-    user1->addToWatched("Inception");
-    user1->listWatched();
-    user1->listWatchList();
+    regularUser.addToWatchlist(inception);
+    regularUser.addToWatchlist(godfather);
+    regularUser.listWatchlist();
 
-    delete user1; 
-    delete admin; 
-    delete romCom; 
+    regularUser.moveToWatched("Inception");
+    regularUser.listWatched();
+    regularUser.listWatchlist();
 
     return 0;
 }
