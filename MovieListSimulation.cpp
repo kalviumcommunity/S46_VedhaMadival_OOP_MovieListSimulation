@@ -40,7 +40,6 @@ public:
 
 int Movie::movieCount = 0;
 
-
 //Displaying the Movie
 class MovieDisplay {
 public:
@@ -55,6 +54,42 @@ public:
     }
 };
 
+//Base Class
+class MovieOperations {
+public:
+    virtual void execute(Movie* movie) = 0;
+    virtual ~MovieOperations() {}
+};
+
+//Operation to add a movie
+class AddMovieOperation : public MovieOperations {
+private:
+    vector<Movie*>& movieList;
+
+public:
+    AddMovieOperation(vector<Movie*>& movies) : movieList(movies) {}
+
+    void execute(Movie* movie) override {
+        movieList.push_back(movie);
+        cout << "Added movie: " << movie->getName() << endl;
+    }
+};
+
+//Operation to list all movies
+class ListMoviesOperation : public MovieOperations {
+private:
+    vector<Movie*>& movieList;
+
+public:
+    ListMoviesOperation(vector<Movie*>& movies) : movieList(movies) {}
+
+    void execute(Movie* movie = nullptr) override {
+        cout << "--- All Movies ---" << endl;
+        for (const auto& movie : movieList) {
+            MovieDisplay::displayDetailed(*movie);
+        }
+    }
+};
 
 //Manages the watchlist and watchedlist
 class User {
@@ -100,7 +135,6 @@ public:
     }
 };
 
-
 //Adds functionality for the admin user
 class AdminUser : public User {
 public:
@@ -111,6 +145,23 @@ public:
     }
 };
 
+// Premium user class that adds favorites functionality
+class PremiumUser : public User {
+private:
+    vector<Movie*> favorites;
+
+public:
+    PremiumUser(string name) : User(name) {}
+
+    void addToFavorites(Movie* movie) { favorites.push_back(movie); }
+
+    void listFavorites() const {
+        cout << "--- Favorite Movies ---" << endl;
+        for (const auto& movie : favorites) {
+            MovieDisplay::displayShort(*movie);
+        }
+    }
+};
 
 //Manages adding and listing all movies
 class MovieManager {
@@ -136,23 +187,24 @@ public:
     }
 };
 
-int main() {
-    MovieManager movieManager;
 
+int main() {
+   MovieManager movieManager;
+
+    // Create movies
     Movie* inception = new Movie("Inception", "Sci-Fi", 148);
     Movie* godfather = new Movie("The Godfather", "Crime", 175);
     Movie* loveActually = new Movie("Love Actually", "Romantic Comedy", 135);
 
+    // Admin functionality
+    AdminUser admin("Vedha");
     movieManager.addMovie(inception);
     movieManager.addMovie(godfather);
     movieManager.addMovie(loveActually);
-
-    AdminUser admin("Vedha");
-    User regularUser("Alex");
-
-    admin.manageMovies();
     movieManager.listAllMovies();
 
+    // Regular user functionality
+    User regularUser("Alex");
     regularUser.addToWatchlist(inception);
     regularUser.addToWatchlist(godfather);
     regularUser.listWatchlist();
@@ -160,6 +212,12 @@ int main() {
     regularUser.moveToWatched("Inception");
     regularUser.listWatched();
     regularUser.listWatchlist();
+
+    // Premium user functionality
+    PremiumUser premiumUser("Sam");
+    premiumUser.addToFavorites(loveActually);
+    premiumUser.listFavorites();
+
 
     return 0;
 }
