@@ -58,7 +58,7 @@ public:
 class MovieOperations {
 public:
     virtual void execute(Movie* movie) = 0;
-    virtual ~MovieOperations() {}
+    virtual ~MovieOperations() {}    
 };
 
 //Operation to add a movie
@@ -92,6 +92,8 @@ public:
 };
 
 //Manages the watchlist and watchedlist
+//Follows LSP
+//The User class provides basic functionality
 class User {
 private:
     string name;
